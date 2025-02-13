@@ -1,7 +1,18 @@
+## InternVL2_5
 conda create -n patho python=3.12
 conda activate patho
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements.txt
 
-# internvl2_5_78b_mpo.py 이미지 파일이름 (지금은 /examples 폴더 안에 있음), 프롬프트 설정 필요
-python internvl2_5_78b_mpo.py 
+export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6
+python main_InternVL.py
+
+## QWEN
+pip install git+https://github.com/huggingface/transformers accelerate
+pip install qwen-vl-utils[decord]==0.0.8
+
+## OVIS
+conda create -n patho11 python=3.11
+pip install torch==2.4.0 transformers==4.46.2 numpy==1.25.0 pillow==10.3.0 pandas openpyxl
+
+python main_ovis.py 

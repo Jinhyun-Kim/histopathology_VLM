@@ -116,9 +116,13 @@ def split_model(model_name):
 # path = 'OpenGVLab/InternVL2_5-78B'
 # device_map = split_model('InternVL2_5-78B')
 
-path = 'OpenGVLab/InternVL2_5-38B-MPO'
+# path = 'OpenGVLab/InternVL2_5-38B-MPO'
 # path = 'OpenGVLab/InternVL2_5-38B'
-device_map = split_model('InternVL2_5-38B')
+# device_map = split_model('InternVL2_5-38B')
+
+path = 'OpenGVLab/InternVL2_5-26B-MPO'
+# path = 'OpenGVLab/InternVL2_5-26B'
+device_map = split_model('InternVL2_5-26B')
 
 # path = 'OpenGVLab/InternVL2_5-8B-MPO'
 # path = 'OpenGVLab/InternVL2_5-8B'
@@ -127,6 +131,10 @@ device_map = split_model('InternVL2_5-38B')
 # path = 'OpenGVLab/InternVL2_5-4B-MPO'
 # path = 'OpenGVLab/InternVL2_5-4B'
 # device_map = split_model('InternVL2_5-4B')
+
+# path = 'OpenGVLab/InternVL2_5-1B-MPO'
+# path = 'OpenGVLab/InternVL2_5-1B'
+# device_map = split_model('InternVL2_5-1B')
 
 # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
 # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
@@ -208,7 +216,7 @@ def prepare_target(label_file_path):
 def main():
     base_path = "/nfs_share/students/jinhyun/TCGA/patches"
     label_file_path = "/home/jinhyun/data/TCGA/LUAD/labels/clinical/clinical.tsv"
-    result_file_path = "results/InternVL2_5-38B-MPO_randompatch448_20.xlsx"
+    result_file_path = "results/InternVL2_5-26B-MPO_randompatch448_20.xlsx"
     os.makedirs("results", exist_ok=True)
 
     df_clinical = prepare_target(label_file_path)
