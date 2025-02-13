@@ -111,10 +111,25 @@ def split_model(model_name):
 
     return device_map
 
+
+# path = 'OpenGVLab/InternVL2_5-78B-MPO'
+# path = 'OpenGVLab/InternVL2_5-78B'
+# device_map = split_model('InternVL2_5-78B')
+
+path = 'OpenGVLab/InternVL2_5-38B-MPO'
+# path = 'OpenGVLab/InternVL2_5-38B'
+device_map = split_model('InternVL2_5-38B')
+
+# path = 'OpenGVLab/InternVL2_5-8B-MPO'
+# path = 'OpenGVLab/InternVL2_5-8B'
+# device_map = split_model('InternVL2_5-8B')
+
+# path = 'OpenGVLab/InternVL2_5-4B-MPO'
+# path = 'OpenGVLab/InternVL2_5-4B'
+# device_map = split_model('InternVL2_5-4B')
+
 # If you set `load_in_8bit=True`, you will need two 80GB GPUs.
 # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
-path = 'OpenGVLab/InternVL2_5-78B-MPO'
-device_map = split_model('InternVL2_5-78B')
 model = AutoModel.from_pretrained(
     path,
     torch_dtype=torch.bfloat16,
@@ -144,16 +159,18 @@ def predict_prognosis(base_directory, target_options = None):
 
     
     ## multi-image multi-round conversation
-    # question = f"<image>\nYou are a professional pathologist who predict patient's prognosis based on the whole-slide image (WSI). Based on these image patches randomly selected from the WSI, what is the predicted survival range of this patient?\nPossible choices:\n{target_options}.\nPlease select and reply only among one of the possible choices, even if unsure."
+    question = f"<image>\nYou are a professional pathologist who predict patient's prognosis based on the whole-slide image (WSI). Based on these image patches randomly selected from the WSI, what is the predicted survival range of this patient?\nPossible choices:\n{target_options}.\nPlease select and reply only among one of the possible choices, even if unsure." # only answer
 
-    question = ("<image>\n"
-            "You are an expert pathologist specializing in analyzing whole-slide images (WSIs) to predict the patient's prognosis. "
-            "Based on the provided image patches extracted from the WSI, assess the survival range of this patient. "
-            f"Select the most appropriate survival range from the following options: {target_options}. "
-            "Ensure your response follows a structured format, providing both a prediction and a concise rationale. "
-            "Respond strictly in the following format:\n"
-            "{your prediction}\n"
-            "Explanation: {a well-reasoned explanation within one paragraph based on your expert assessment of the image features.}")
+    # question = ("<image>\n"
+    #         "You are an expert pathologist specializing in analyzing whole-slide images (WSIs) to predict the patient's prognosis. "
+    #         "Based on the provided image patches extracted from the WSI, assess the survival range of this patient. "
+    #         f"Select the most appropriate survival range from the following options: {target_options}. "
+    #         "Ensure your response follows a structured format, providing both a prediction and a concise rationale. "
+    #         "Respond strictly in the following format:\n"
+    #         "{your prediction}\n"
+    #         "Explanation: {a well-reasoned explanation within one paragraph based on your expert assessment of the image features.}") # with explanation
+
+    # question = f"<image>\nYou are a professional pathologist who predicts patient's prognosis based on the whole-slide image (WSI). Based on these image patches extracted from the WSI with different magnifications, what is the predicted survival range of this patient?\nPossible choices:\n{target_options}.\nPlease select and reply only among one of the possible choices, even if unsure." # multi-scale
 
 
     response, history = model.chat(tokenizer, pixel_values, question, generation_config, 
@@ -191,6 +208,8 @@ def prepare_target(label_file_path):
 def main():
     base_path = "/nfs_share/students/jinhyun/TCGA/patches"
     label_file_path = "/home/jinhyun/data/TCGA/LUAD/labels/clinical/clinical.tsv"
+    result_file_path = "results/InternVL2_5-38B-MPO_randompatch448_20.xlsx"
+    os.makedirs("results", exist_ok=True)
 
     df_clinical = prepare_target(label_file_path)
     print(f"Target distribution: \n", df_clinical[["days_to_death_category"]].value_counts())
@@ -210,7 +229,7 @@ def main():
         print("Predicted: ", predicted_prognosis, " Actual:", actual_prognosis)
     
     results_df = pd.DataFrame(results_list, columns=["Patient ID", "Predicted Prognosis", "Actual Prognosis"])
-    results_df.to_excel("results/prognosis_predictions_2.xlsx", index=False)
+    results_df.to_excel(result_file_path, index=False)
 
 
 if __name__ == "__main__":
